@@ -8,7 +8,7 @@ def main():
     pygame.init()
     size = window_width, window_height = (800, 500)
 
-    g = Game(size, 30)
+    g = Game(size, 60)
 
     g.run()
 
@@ -16,7 +16,7 @@ class Game:
     def __init__(self, size, fps):
         self.size = size
         self.fps = fps
-        self.fpsClock = pygame.time.Clock()
+        self.clock = pygame.time.Clock()
         self.drawsurf = pygame.display.set_mode(size);
         self.mousex, self.mousey = 0, 0
 
@@ -25,6 +25,7 @@ class Game:
             self.checkevents()
             self.update()
             self.render()
+            self.clock.tick(self.fps)
 
     def update(self):
         pass     
