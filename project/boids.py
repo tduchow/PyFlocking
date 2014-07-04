@@ -1,15 +1,13 @@
 import pygame, sys
 from pygame.locals import *
 
-red = pygame.Color(255, 0, 0)
-black = pygame.Color(0, 0, 0)
+RED = pygame.Color(255, 0, 0)
+BLACK = pygame.Color(0, 0, 0)
 
 def main():
     pygame.init()
     size = window_width, window_height = (800, 500)
-
     g = Game(size, 60)
-
     g.run()
 
 class Game:
@@ -19,6 +17,8 @@ class Game:
         self.clock = pygame.time.Clock()
         self.drawsurf = pygame.display.set_mode(size);
         self.mousex, self.mousey = 0, 0
+        self.boid_image = pygame.image.load('TriBoid.png').convert()
+        self.boid_image = pygame.transform.scale(self.boid_image, (20, 15))
 
     def run(self):
         while True:
@@ -40,9 +40,10 @@ class Game:
 
     def render(self):
         ds = self.drawsurf;
-        ds.fill(black)
+        ds.fill(BLACK)
+        ds.blit(self.boid_image, (self.mousex - self.boid_image.get_width()/2, self.mousey-self.boid_image.get_height()/2))
+        #pygame.draw.circle(ds, RED, (self.mousex, self.mousey), 10)
 
-        pygame.draw.circle(ds, red, (self.mousex, self.mousey), 10)
         pygame.display.update()
     
 if __name__ == '__main__': main()    
