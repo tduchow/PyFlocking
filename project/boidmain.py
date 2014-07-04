@@ -1,6 +1,6 @@
 import pygame, sys
 from pygame.locals import *
-
+from boid import *
 RED = pygame.Color(255, 0, 0)
 BLACK = pygame.Color(0, 0, 0)
 
@@ -19,6 +19,7 @@ class Game:
         self.mousex, self.mousey = 0, 0
         self.boid_image = pygame.image.load('TriBoid.png').convert()
         self.boid_image = pygame.transform.scale(self.boid_image, (20, 15))
+        self.flock = makeflock(10, size[0], size[1], self.boid_image)
 
     def run(self):
         while True:
@@ -28,7 +29,8 @@ class Game:
             self.clock.tick(self.fps)
 
     def update(self):
-        pass     
+        for b in self.flock:
+            b.update(self.flock)     
 
     def checkevents(self):
         for event in pygame.event.get():
@@ -43,6 +45,8 @@ class Game:
         ds.fill(BLACK)
         ds.blit(self.boid_image, (self.mousex - self.boid_image.get_width()/2, self.mousey-self.boid_image.get_height()/2))
         #pygame.draw.circle(ds, RED, (self.mousex, self.mousey), 10)
+        for b in self.flock:
+            b.render(ds);
 
         pygame.display.update()
     
