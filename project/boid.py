@@ -12,14 +12,39 @@ def makeflock(n, w, h, img):
 	return l
 
 class Boid:
-	max_speed = 100;#px/s?
+	max_speed = 200#px/s?
+	cohesion_factor = 4
+	alignment_factor = .05
+	separation_factor = 6
+	interaction_distance = 50
+	interaction_distance_sq = interaction_distance**2
+	separation_distance = 25
+	separation_distance_sq = separation_distance**2
+
 	def __init__(self, ipos, ivel, img):
 		self.p = ipos
 		self.v = ivel
 		self.image = img
 
-	def update(self, flock, elapsed):
-		self.p += self.v * elapsed;
+	def update(self, flock, elapsed_time):
+		cohere, separate, align = Vector2(), Vector2(), Vector2()
+		for other in flock:
+			if other != self:
+				interaction_count = 0
+				separation_count = 0
+				#if it's close enough to interact
+				if other.p.distancesq() < Boid.interaction_distance_sq:
+					interaction_count+=1
+					cohere += other.p
+					align += other.v
+					if other.p.distancesq() < Boid.separation_distance_sq:
+						separation_count += 1
+						separate += other.p
+
+		
+
+
+		self.p += self.v * elapsed_time;
 
 
 	def render(self, surface):
@@ -27,13 +52,15 @@ class Boid:
 		surface.blit(drawimage, (self.p.x, self.p.y))
 
 class Vector2:
-	def __init__(self, x, y):
+	def __init__(self, x = 0, y = 0):
 		self.x = x
 		self.y = y
 	def theta(self):
 		return atan2(self.y,self.x)/3.1415926*180
+	def magsq(self):
+		return self.y**2 + self.x**2
 	def mag(self):
-		return sqrt(self.y**2 + self.x**2)
+		return sqrt(self.magsq())
 	def copy(self):
 		return Vector2(self.x, self.y)
 	def norm(self):
@@ -46,6 +73,10 @@ class Vector2:
 	def setmag(self, newmag):
 		self.norm()
 		self.scale(newmag)
+	def distancesq(self, other):
+		return (self.x-other.x)**2 + (self.y-other.y)**2
+	def distance(self, other):
+		return sqrt(self.distancesq(other))
 	def __repr__(self):
 		return "(" + str(self.x) + " ," + str(self.y) + ") angle = " + str(self.theta())
 	#overloaded vector addition and subraction
@@ -58,7 +89,7 @@ class Vector2:
 	#overloaded scalar multiplication and division
 	def __mul__(self, f):
 		return Vector2(self.x * f, self.y * f)
-	def __div__(self, f):
+	def __truediv__(self, f):
 		return self * (1/f)
 
 

@@ -6,8 +6,8 @@ BLACK = pygame.Color(0, 0, 0)
 
 def main():
     pygame.init()
-    size = window_width, window_height = (800, 500)
-    g = Game(size, 60)
+    size = window_width, window_height = (1000, 600)
+    g = Game(size, 30)
     g.run()
 
 class Game:
@@ -18,7 +18,7 @@ class Game:
         self.drawsurf = pygame.display.set_mode(size);
         self.mousex, self.mousey = 0, 0
         self.boid_image = pygame.image.load('TriBoid.png')
-        self.boid_image = pygame.transform.scale(self.boid_image, (20, 15))
+        self.boid_image = pygame.transform.smoothscale(self.boid_image, (20, 15))
         self.flock = makeflock(10, size[0], size[1], self.boid_image)
 
     def run(self):
@@ -29,12 +29,11 @@ class Game:
             self.clock.tick(self.fps)
 
     def update(self):
-        avgfps = self.clock.get_fps()
-        if avgfps>0:
+        avgfps = self.clock.get_fps()#the average fps over the last 10 frames.
+        if avgfps>0:#Basically after the first 10 frames
             avgelapsed = 1/avgfps
         else:
             avgelapsed = 1/self.fps
-        print(avgelapsed)
         for b in self.flock:
             b.update(self.flock, avgelapsed)     
 
