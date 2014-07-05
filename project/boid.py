@@ -3,9 +3,10 @@ from math import atan2, sqrt
 from random import randint
 def makeflock(n, w, h, img):
 	l = []
+	vm = int(sqrt(2)/2*Boid.max_speed) #the max a velocity component can be
 	for x in range(n):
 		p = Vector2(randint(0, w), randint(0, h))
-		v = Vector2(randint(0, int(sqrt(2)/2*Boid.max_speed)), int(sqrt(2)/2*Boid.max_speed))
+		v = Vector2(randint(-vm, vm), randint(-vm, vm))
 		print(v)
 		l.append(Boid(p, v, img))
 	return l
@@ -20,8 +21,8 @@ class Boid:
 		pass
 
 	def render(self, surface):
-		self.image = pygame.transform.rotate(self.image, self.v.theta())
-		surface.blit(self.image, (self.p.x, self.p.y))
+		drawimage = pygame.transform.rotate(self.image, self.v.theta())
+		surface.blit(drawimage, (self.p.x, self.p.y))
 
 class Vector2:
 	def __init__(self, x, y):
