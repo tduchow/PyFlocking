@@ -10,17 +10,17 @@ def makeflock(n, w, h, img):
 		print(v)
 		l.append(Boid(p, v, img))
 	return l
+
 class Boid:
-	max_speed = 10;
+	max_speed = 100;#px/s?
 	def __init__(self, ipos, ivel, img):
 		self.p = ipos
 		self.v = ivel
 		self.image = img
 
-	def update(self, flock):
-		self.p += self.v
+	def update(self, flock, elapsed):
+		self.p += self.v * elapsed;
 
-		pass
 
 	def render(self, surface):
 		drawimage = pygame.transform.rotate(self.image, -self.v.theta())
@@ -48,11 +48,17 @@ class Vector2:
 		self.scale(newmag)
 	def __repr__(self):
 		return "(" + str(self.x) + " ," + str(self.y) + ") angle = " + str(self.theta())
+	#overloaded vector addition and subraction
 	def __add__(self, other):
 		return Vector2(self.x+other.x, self.y+other.y)
 	def __sub__(self, other):
 		return Vector2(self.x-other.x, self.y-other.y)
 	def __neg__(self):
 		return Vector2(-self.x, -self.y)
+	#overloaded scalar multiplication and division
+	def __mul__(self, f):
+		return Vector2(self.x * f, self.y * f)
+	def __div__(self, f):
+		return self * (1/f)
 
 
