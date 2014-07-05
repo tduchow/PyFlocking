@@ -18,10 +18,12 @@ class Boid:
 		self.image = img
 
 	def update(self, flock):
+		self.p += self.v
+
 		pass
 
 	def render(self, surface):
-		drawimage = pygame.transform.rotate(self.image, self.v.theta())
+		drawimage = pygame.transform.rotate(self.image, -self.v.theta())
 		surface.blit(drawimage, (self.p.x, self.p.y))
 
 class Vector2:
@@ -46,5 +48,11 @@ class Vector2:
 		self.scale(newmag)
 	def __repr__(self):
 		return "(" + str(self.x) + " ," + str(self.y) + ") angle = " + str(self.theta())
+	def __add__(self, other):
+		return Vector2(self.x+other.x, self.y+other.y)
+	def __sub__(self, other):
+		return Vector2(self.x-other.x, self.y-other.y)
+	def __neg__(self):
+		return Vector2(-self.x, -self.y)
 
 
