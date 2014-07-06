@@ -55,11 +55,13 @@ class Game:
         for b in self.flock:
             b.render(ds);
 
-        txt_surf = self.font.render(str(constrain_force(Vector2(self.mousex, self.mousey), self.size)) + str((self.mousex, self.mousey)), False, pygame.Color(200, 200, 200))
+        s = str(constrain_force(Vector2(self.mousex, self.mousey), self.size)) + str((self.mousex, self.mousey))
+        self.render_text(ds, s, 10, 10)
+        pygame.display.update()
+    def render_text(self, ds, s, x, y):
+        txt_surf = self.font.render(s, False, pygame.Color(200, 200, 200))
         txt_rect = txt_surf.get_rect()
         txt_rect.topleft = (10, 20)
         ds.blit(txt_surf, txt_rect)
 
-        pygame.display.update()
-    
 if __name__ == '__main__': main()    

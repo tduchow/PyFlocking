@@ -90,7 +90,7 @@ def constrain_force(p, bounds):
 	yforce = 1.3**(abs(p.y - centerpoint.y)-centerpoint.y)
 	centerer.x *= xforce
 	centerer.y *= yforce
-	return centerer
+	return centerer.x
 
 class Vector2:
 	def __init__(self, x = 0, y = 0):
