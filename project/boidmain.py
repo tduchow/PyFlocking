@@ -3,7 +3,7 @@ from pygame.locals import *
 from boid import *
 RED = pygame.Color(255, 0, 0)
 BLACK = pygame.Color(0, 0, 0)
-
+NUM_BOIDS = 25
 def main():
     pygame.init()
     size = window_width, window_height = (1000, 600)
@@ -19,7 +19,7 @@ class Game:
         self.mousex, self.mousey = 0, 0
         self.boid_image = pygame.image.load('TriBoid.png')
         self.boid_image = pygame.transform.smoothscale(self.boid_image, (20, 15))
-        self.flock = makeflock(10, size[0], size[1], self.boid_image)
+        self.flock = makeflock(NUM_BOIDS, size[0], size[1], self.boid_image)
 
     def run(self):
         while True:
