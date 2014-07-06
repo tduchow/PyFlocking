@@ -3,9 +3,10 @@ from pygame.locals import *
 from boid import *
 RED = pygame.Color(255, 0, 0)
 BLACK = pygame.Color(0, 0, 0)
-NUM_BOIDS = 25
+NUM_BOIDS = 10
 def main():
     pygame.init()
+
     size = window_width, window_height = (1000, 600)
     g = Game(size, 30)
     g.run()
@@ -20,6 +21,7 @@ class Game:
         self.boid_image = pygame.image.load('TriBoid.png')
         self.boid_image = pygame.transform.smoothscale(self.boid_image, (20, 15))
         self.flock = makeflock(NUM_BOIDS, size[0], size[1], self.boid_image)
+        self.font = pygame.font.Font('freesansbold.ttf', 32)
 
     def run(self):
         while True:
@@ -52,6 +54,11 @@ class Game:
         #pygame.draw.circle(ds, RED, (self.mousex, self.mousey), 10)
         for b in self.flock:
             b.render(ds);
+
+        txt_surf = self.font.render(str(constrain_force(Vector2(self.mousex, self.mousey), self.size)) + str((self.mousex, self.mousey)), False, pygame.Color(200, 200, 200))
+        txt_rect = txt_surf.get_rect()
+        txt_rect.topleft = (10, 20)
+        ds.blit(txt_surf, txt_rect)
 
         pygame.display.update()
     

@@ -1,5 +1,5 @@
 import pygame
-from math import atan2, sqrt
+from math import atan2, sqrt, exp
 from random import randint
 def makeflock(n, w, h, img):
 	l = []
@@ -13,17 +13,18 @@ def makeflock(n, w, h, img):
 
 class Boid:
 	max_speed = 200#px/s?
-	cohesion_factor = 4
-	alignment_factor = .05
-	separation_factor = 10
+	cohesion_factor = .4
+	alignment_factor = .0005
+	separation_factor = 1
 	emergency_factor = 10
 	interaction_distance = 75
 	interaction_distance_sq = interaction_distance**2
-	separation_distance = 25
+	separation_distance = 30
 	separation_distance_sq = separation_distance**2
-	emergency_distance = 10
+	emergency_distance = 15
 	emergency_distance_sq = emergency_distance**2
-	teleport = True
+	teleport = False
+	constrain = not teleport
 	def __init__(self, ipos, ivel, img):
 		self.p = ipos
 		self.v = ivel
@@ -39,7 +40,6 @@ class Boid:
 				self.p.y = bounds[1]
 			elif self.p.y > bounds[1]: 
 				self.p.y = 0
-
 
 		cohere, separate, align = Vector2(), Vector2(), Vector2()
 		for other in flock:
@@ -69,8 +69,12 @@ class Boid:
 		separate = separate - self.p
 		separate *= Boid.separation_factor
 		#align is now the average velocity of the nearby boids, for now, we'll just add that?
-
 		acceleration = cohere + align - separate
+		# print(acceleration)
+		# print('\n'.join(['C: ' + str(cohere), 'A: ' + str(align), 'S: ' + str(separate)]))
+		if Boid.constrain:
+			acceleration+=constrain_force(self.p, bounds)
+
 		self.v += acceleration
 		self.v.limit(Boid.max_speed)
 		self.p += self.v * elapsed_time;
@@ -79,6 +83,14 @@ class Boid:
 	def render(self, surface):
 		drawimage = pygame.transform.rotate(self.image, -self.v.theta())
 		surface.blit(drawimage, (self.p.x, self.p.y))
+def constrain_force(p, bounds):
+	centerpoint = Vector2(*bounds)/2
+	centerer = (centerpoint-p).norm()
+	xforce = 1.3**(abs(p.x - centerpoint.x)-centerpoint.x)
+	yforce = 1.3**(abs(p.y - centerpoint.y)-centerpoint.y)
+	centerer.x *= xforce
+	centerer.y *= yforce
+	return centerer
 
 class Vector2:
 	def __init__(self, x = 0, y = 0):
@@ -101,6 +113,7 @@ class Vector2:
 		self.x *= factor
 		self.y *= factor
 		return self
+
 	def setmag(self, newmag):
 		self.norm()
 		self.scale(newmag)
@@ -113,7 +126,7 @@ class Vector2:
 			self.setmag(max)
 
 	def __repr__(self):
-		return "(" + str(self.x) + " , " + str(self.y) + "): R = " + str(self.mag())[0:5]+ ", θ = " + str(self.theta())[0:5] + "°"
+		return "(" + str(self.x)[0:5] + " , " + str(self.y)[0:5] + "): R = " + str(self.mag())[0:5]+ ", θ = " + str(self.theta())[0:6] + "°"
 
 	#overloaded vector addition and subraction
 	def __add__(self, other):
