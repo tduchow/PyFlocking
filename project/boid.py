@@ -16,17 +16,31 @@ class Boid:
 	cohesion_factor = 4
 	alignment_factor = .05
 	separation_factor = 10
+	emergency_factor = 10
 	interaction_distance = 75
 	interaction_distance_sq = interaction_distance**2
 	separation_distance = 25
 	separation_distance_sq = separation_distance**2
-
+	emergency_distance = 10
+	emergency_distance_sq = emergency_distance**2
+	teleport = True
 	def __init__(self, ipos, ivel, img):
 		self.p = ipos
 		self.v = ivel
 		self.image = img
 
-	def update(self, flock, elapsed_time):
+	def update(self, flock, elapsed_time, bounds):
+		if Boid.teleport:
+			if self.p.x < 0:
+				self.p.x = bounds[0]
+			elif self.p.x > bounds[0]: 
+				self.p.x = 0
+			if self.p.y < 0:
+				self.p.y = bounds[1]
+			elif self.p.y > bounds[1]: 
+				self.p.y = 0
+
+
 		cohere, separate, align = Vector2(), Vector2(), Vector2()
 		for other in flock:
 			if other != self:
@@ -41,6 +55,8 @@ class Boid:
 					if other.p.distancesq(self.p) < Boid.separation_distance_sq:
 						separation_count += 1
 						separate += other.p
+						if other.p.distancesq(self.p) < Boid.emergency_distance_sq:
+							separate += other.p*Boid.emergency_factor
 		if interaction_count>0:
 			cohere /= interaction_count
 			align /= interaction_count

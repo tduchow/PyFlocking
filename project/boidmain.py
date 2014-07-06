@@ -35,7 +35,7 @@ class Game:
         else:
             avgelapsed = 1/self.fps
         for b in self.flock:
-            b.update(self.flock, avgelapsed)     
+            b.update(self.flock, avgelapsed, self.size)     
 
     def checkevents(self):
         for event in pygame.event.get():
